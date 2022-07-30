@@ -91,9 +91,11 @@ def create_model(args):
     model = models.create(args.arch, num_features=args.features, norm=True, dropout=args.dropout, num_classes=0)
     # adopt domain-specific BN
     convert_dsbn(model)
+    print(torch.cuda.is_available())
     # use CUDA
     model.cuda()
-    model = nn.DataParallel(model)
+
+    # model = nn.DataParallel(model)
     return model
 
 
@@ -134,7 +136,7 @@ def main_worker(args):
     model = create_model(args)
 
     # Create hybrid memory
-    memory = HybridMemory(model.module.num_features, source_classes+len(dataset_target.train),
+    memory = HybridMemory(model.num_features, source_classes+len(dataset_target.train),
                             temp=args.temp, momentum=args.momentum).cuda()
 
     # Initialize source-domain class centroids
@@ -291,9 +293,9 @@ def main_worker(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Self-paced contrastive learning on UDA re-ID")
     # data
-    parser.add_argument('-ds', '--dataset-source', type=str, default='dukemtmc',
+    parser.add_argument('-ds', '--dataset-source', type=str, default='market1501',
                         choices=datasets.names())
-    parser.add_argument('-dt', '--dataset-target', type=str, default='market1501',
+    parser.add_argument('-dt', '--dataset-target', type=str, default='msmt17',
                         choices=datasets.names())
     parser.add_argument('-b', '--batch-size', type=int, default=64)
     parser.add_argument('-j', '--workers', type=int, default=4)
@@ -325,7 +327,7 @@ if __name__ == '__main__':
                         help="learning rate")
     parser.add_argument('--weight-decay', type=float, default=5e-4)
     parser.add_argument('--epochs', type=int, default=50)
-    parser.add_argument('--iters', type=int, default=400)
+    parser.add_argument('--iters', type=int, default=800)
     parser.add_argument('--step-size', type=int, default=20)
     # training configs
     parser.add_argument('--seed', type=int, default=1)
@@ -335,9 +337,11 @@ if __name__ == '__main__':
                         help="temperature for scaling contrastive loss")
     # path
     working_dir = osp.dirname(osp.abspath(__file__))
-    parser.add_argument('--data-dir', type=str, metavar='PATH',
-                        default=osp.join(working_dir, 'data'))
-    parser.add_argument('--logs-dir', type=str, metavar='PATH',
-                        default=osp.join(working_dir, 'logs'))
+    parser.add_argument('--data-dir', type=str, metavar='PATH',default="D:/yuan778/reid_code_repo/datasets")
+                        # default=osp.join(working_dir, 'data'))
+    parser.add_argument('--logs-dir', type=str, metavar='PATH',default="logs/spcl_uda/market2msmt_resnet50")
+                        # default=osp.join(working_dir, 'logs'))
     main()
 # conda install faiss-gpu -c pytorch -i https://pypi.tuna.tsinghua.edu.cn/simple
+# D:/yuan778/reid_code_repo/datasets
+# python spcl_train_uda.py --iters 800 -ds market1501 -dt msmt17 --data-dir D:/yuan778/reid_code_repo/datasets --logs-dir logs/spcl_uda/market2msmt_resnet50
