@@ -5,6 +5,7 @@ import re
 import urllib
 import zipfile
 
+# from ..utils.data import BaseImageDataset
 from ..utils.data import BaseImageDataset
 from ..utils.osutils import mkdir_if_missing
 from ..utils.serialization import write_json

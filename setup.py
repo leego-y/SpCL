@@ -7,10 +7,14 @@ setup(name='SpCL',
       author='Yixiao Ge',
       author_email='geyixiao831@gmail.com',
       url='https://github.com/yxgeee/SpCL',
+      # install_requires=[
+      #     'numpy', 'torch', 'torchvision',
+      #     'six', 'h5py', 'Pillow', 'scipy',
+      #     'scikit-learn', 'metric-learn', 'faiss_gpu==1.6.3'],
       install_requires=[
-          'numpy', 'torch', 'torchvision',
+          'numpy',
           'six', 'h5py', 'Pillow', 'scipy',
-          'scikit-learn', 'metric-learn', 'faiss_gpu==1.6.3'],
+          'scikit-learn', 'metric-learn'],
       packages=find_packages(),
       keywords=[
           'Unsupervised Learning',
